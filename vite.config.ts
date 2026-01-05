@@ -3,7 +3,13 @@ import { defineConfig, loadEnv } from 'vite';
 import react from '@vitejs/plugin-react';
 
 export default defineConfig(({ mode }) => {
-  const env = loadEnv(mode, '.', '');
+  // Load env file based on `mode` in the current working directory.
+  // Set the third parameter to '' to load all env regardless of the `VITE_` prefix.
+  const env = loadEnv(mode, process.cwd(), '');
+
+  // Safely handle potential undefined env vars
+  const apiKey = env.GEMINI_API_KEY || '';
+
   return {
     base: '/qu-ng-l-th-p/',
     server: {
@@ -12,13 +18,20 @@ export default defineConfig(({ mode }) => {
     },
     plugins: [react()],
     define: {
-      'process.env.API_KEY': JSON.stringify(env.GEMINI_API_KEY || ''),
-      'process.env.GEMINI_API_KEY': JSON.stringify(env.GEMINI_API_KEY || '')
+      // Stringify properly and fallback to empty string if missing
+      'process.env.API_KEY': JSON.stringify(apiKey),
+      'process.env.GEMINI_API_KEY': JSON.stringify(apiKey)
     },
     resolve: {
       alias: {
         '@': path.resolve(__dirname, '.'),
       }
+    },
+    // Ensure build target is widely supported
+    build: {
+      target: 'es2020',
+      outDir: 'dist',
+      sourcemap: false
     }
   };
 });
