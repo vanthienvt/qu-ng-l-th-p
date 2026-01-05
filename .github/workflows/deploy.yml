@@ -1,4 +1,4 @@
-name: Deploy to GitHub Pages
+name: Deploy
 
 on:
   push:
@@ -23,15 +23,10 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Build Project
+      - name: Build
         run: npm run build
-        env:
-          CI: false 
 
-      - name: Check Build Output
-        run: ls -R dist
-
-      - name: Deploy to GitHub Pages
+      - name: Deploy
         uses: JamesIves/github-pages-deploy-action@v4
         with:
           folder: dist
